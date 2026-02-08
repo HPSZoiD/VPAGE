@@ -206,7 +206,26 @@ export const ValentineLanding = () => {
     if (audioRef.current) {
       audioRef.current.volume = 0.4;
     }
-  }, []);
+
+    const playAudio = () => {
+      if (audioRef.current && !isMuted) {
+        audioRef.current.play().catch(err => console.log('Autoplay prevented:', err));
+        window.removeEventListener('click', playAudio);
+        window.removeEventListener('touchstart', playAudio);
+        window.removeEventListener('scroll', playAudio);
+      }
+    };
+
+    window.addEventListener('click', playAudio);
+    window.addEventListener('touchstart', playAudio);
+    window.addEventListener('scroll', playAudio);
+
+    return () => {
+      window.removeEventListener('click', playAudio);
+      window.removeEventListener('touchstart', playAudio);
+      window.removeEventListener('scroll', playAudio);
+    };
+  }, [isMuted]);
 
   return (
     <div className="valentine-landing">
@@ -221,7 +240,7 @@ export const ValentineLanding = () => {
         {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
       </button>
 
-      <audio ref={audioRef} loop autoPlay>
+      <audio ref={audioRef} loop>
         <source src="/Romantic Theme.mp3" type="audio/mpeg" />
       </audio>
 
